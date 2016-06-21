@@ -32,6 +32,14 @@ module LeaveManagementSystem
 	  @approver = @leave.approver
 	  mail :to => @applier.mail, :subject => "LMS : [ #{@applier.name} - #{@leave.id} ] Apply #{@leave_type}"
 	end
+
+	def cancelled_leave(leave)
+		@leave = leave
+	  @applier = @leave.employee
+	  @cancelled_by = Employee.current
+	  mail :to => @applier.mail, :subject => "LMS : [ #{@applier.name} - #{@leave.id} ] Leave cancelled"
+	  # mail :to => @cancelled_by.mail, :subject => "LMS : [ #{@applier.name} - #{@leave.id} ] Leave cancelled"
+	end
         
 	def notify_team(leave)
 	  @leave = leave

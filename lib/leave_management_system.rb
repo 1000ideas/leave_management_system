@@ -44,57 +44,57 @@ module LeaveManagementSystem
     def lms_authorize
       user = User.current
       authorized = case controller_name
-	when 'lms_dashboards'
-          LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:al]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:ar]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:rt])
-	when 'lms_settings', 'lms_leave_accounts'
-	  LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
-	when 'lms_public_holidays'
-	  if action_name == 'index'
-	    LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:al]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:ar]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:rt])
-	  else
-	    LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
-	  end
-	when 'lms_reports'
-	  LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:rt])
-	when 'lms_leave_types'
-	  LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
-	when 'lms_leaves'
-	  compare_action(user)
-	end
+                   when 'lms_dashboards'
+                     LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:al]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:ar]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:rt])
+                   when 'lms_settings', 'lms_leave_accounts'
+                     LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
+                   when 'lms_public_holidays'
+                     if action_name == 'index'
+                       LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:al]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:ar]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:rt])
+                     else
+                       LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
+                     end
+                   when 'lms_reports'
+                     LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:rt])
+                   when 'lms_leave_types'
+                     LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
+                   when 'lms_leaves'
+                     compare_action(user)
+                   end
       if authorized
-	@employee = user.becomes Employee
+        @employee = user.becomes Employee
         return true
       else
         deny_access
       end
     end
-    
+
     def compare_action(user)
       case action_name
-        when 'new', 'create', 'destroy'
+      when 'new', 'create', 'destroy'
+        LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:al])
+      when 'approve', 'reject'
+        LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:ar])
+      when 'proces', 'deduct'
+        LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
+      when 'pending', 'approved', 'rejected', 'cancelled'
+        if params[:menu] == 'Others'
+          LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:ar]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
+        else
           LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:al])
-        when 'approve', 'reject'
-          LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:ar])
-        when 'proces', 'deduct'
-          LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
-        when 'pending', 'approved', 'rejected', 'cancelled'
-          if params[:menu] == 'Others'
-             LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:ar]) || LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:dt])
-          else
-            LeaveManagementSystem.allowed_to?(user, LeaveManagementSystem::ROLES[:al])
-          end
+        end
       end
     end
 
     def find_current_year_settings
       @yearly_settings = LmsYearlySetting.current_year_settings
     end
-    
+
     def find_leave_types
       @leave_types = LmsLeaveType.find(:all)
       @active_leave_types = @yearly_settings ? @yearly_settings.leave_types : []
     end
-    
+
     def find_public_holidays
       @public_holidays = @yearly_settings ? @yearly_settings.lms_public_holidays.order("ph_date ASC") : []
     end

@@ -51,6 +51,7 @@
 	      <th>Approved on</th>
 	      <th>Processor</th>
 	      <th>Processed on</th>
+        <th>Delete</th>
 	    <% elsif rejected_tab %>
 	      <th>Rejector</th>
 	      <th>Rejected on</th> 
@@ -99,23 +100,29 @@
 	        <% if LeaveManagementSystem.allowed_to? @employee, LeaveManagementSystem::ROLES[:dt] %>
 	          <% if leave.id == leave.parent_leave_id %>
 	            Process
-		  <% else %>
-		    <%= link_to 'Process', proces_lms_leafe_path(leave.id), :remote => true %>
-		  <% end %>
-		<% else %>
-		  <p style='color:red;'>Yet to process</p>
-		<% end %>
+        		  <% else %>
+        		    <%= link_to 'Process', proces_lms_leafe_path(leave.id), :remote => true %>
+        		  <% end %>
+      		<% else %>
+      		  <p style='color:red;'>Yet to process</p>
+      		<% end %>
 	      </td>
 	      <td><%= leave.approver_name %></td>
 	      <td><%= leave.approved_on.strftime("%d %b %Y") %></td>
 	      <td>--</td>
 	      <td>--</td>
+        <% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:ar]) %>
+          <td><%= link_to 'Delete', lms_leafe_path(leave.id), method: :delete, remote: true, confirm: "Are you sure to cancel this leave?" %></td>
+        <% end %>
 	    <% elsif leave.processed? %>
 	      <td><p style='color:green;'>Processed</p></td>
 	      <td><%= leave.approver_name %></td>
 	      <td><%= leave.approved_on.strftime("%d %b %Y") %></td>
 	      <td><%= leave.processor_name %></td>
 	      <td><%= leave.processed_on.strftime("%d %b %Y") %></td>
+        <% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:ar]) %>
+          <td><%= link_to 'Delete', lms_leafe_path(leave.id), method: :delete, remote: true, confirm: "Are you sure to cancel this leave?" %></td>
+        <% end %>
 	    <% elsif leave.rejected? %>
 	      <td><%= leave.lms_leave_status.rejector.name %></td>
 	      <td><%= leave.rejected_on.strftime("%d %b %Y") %></td>
@@ -127,26 +134,32 @@
 	      <td><%= link_to 'Cancel', lms_leafe_path(leave.id), :method => :delete, :remote => true, :confirm => "Are you sure to cancel your leave?" %></td>
 	    <% elsif leave.approved? %>
 	      <td>
-		<% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:dt]) %>
-	          <% if leave.id == leave.parent_leave_id %>
+		    <% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:dt]) %>
+          <% if leave.id == leave.parent_leave_id %>
 	            Process
-		  <% else %>
+		      <% else %>
 		    <%= link_to 'Process', proces_lms_leafe_path(leave.id, :menu => 'Own'), :remote => true %>
-		  <% end %>
-		<% else %>
+		      <% end %>
+		    <% else %>
 	          <p style='color:red;'>Yet to process</p>
-		<% end %>
+		    <% end %>
 	      </td>
 	      <td><%= leave.approver_name %></td>
 	      <td><%= leave.approved_on.strftime("%d %b %Y") %></td>
 	      <td>--</td>
 	      <td>--</td>
+        <% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:ar]) %>
+          <td><%= link_to 'Delete', lms_leafe_path(leave.id), method: :delete, remote: true, confirm: "Are you sure to cancel this leave?" %></td>
+        <% end %>
 	    <% elsif leave.processed? %>
 	      <td><p style='color:green;'>Processed</p></td>
 	      <td><%= leave.approver_name %></td>
 	      <td><%= leave.approved_on.strftime("%d %b %Y") %></td>
 	      <td><%= leave.processor_name %></td>
-	      <td><%= leave.processed_on.strftime("%d %b %Y") %></td>
+	      <td><%= leave.processed_on.strftime("%d %b %Y") %>!!!!!!!</td>
+        <% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:ar]) %>
+          <td><%= link_to 'Delete', lms_leafe_path(leave.id), method: :delete, remote: true, confirm: "Are you sure to cancel this leave?" %></td>
+        <% end %>
 	    <% elsif leave.rejected? %>
 	      <td><%= leave.lms_leave_status.rejector.name %></td>
 	      <td><%= leave.rejected_on.strftime("%d %b %Y") %></td>

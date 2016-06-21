@@ -54,6 +54,24 @@ class LmsLeavesController < ApplicationController
     leave_status = leave.lms_leave_status
     if leave_status.pending?
       leave_status.update_attributes :status => LmsLeaveStatus::CANCELLED, :cancelled_on => Time.now
+    elsif leave_status.approved?
+      leave_status.update_attributes :status => LmsLeaveStatus::CANCELLED, :cancelled_on => Time.now
+      Mailer.cancelled_leave(leave).deliver
+    elsif leave_status.processed?
+      field = LmsCustomField.find { |f| f.table_name == 'lms_monthly_leave_histories' }.column_name
+      month_history = leave.lms_monthly_leave_history
+      days = leave.no_of_days.to_f
+      
+      if leave_status.lop > 0
+        month_history.lop = month_history.lop - days;
+      else
+        month_history.method("#{field}=").call(month_history.method(field).call - days)
+        month_history.total_leaves_taken = month_history.total_leaves_taken - days
+      end
+
+      month_history.save
+      leave_status.update_attributes :status => LmsLeaveStatus::CANCELLED, :cancelled_on => Time.now
+      Mailer.cancelled_leave(leave).deliver
     end
     @pending_leaves = Employee.pending_leaves
     respond_to do |format|
