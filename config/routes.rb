@@ -48,5 +48,6 @@ resources :lms_leaves do
     get 'reject'
     get 'proces'
   end
+  resources :lms_notes, only: [:index, :new, :create, :destroy]
 end
 resources :lms_public_holidays

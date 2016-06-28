@@ -52,6 +52,7 @@
 	      <th>Processor</th>
 	      <th>Processed on</th>
         <th>Delete</th>
+        <th>Notes</th>
 	    <% elsif rejected_tab %>
 	      <th>Rejector</th>
 	      <th>Rejected on</th> 
@@ -113,6 +114,7 @@
 	      <td>--</td>
         <% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:ar]) %>
           <td><%= link_to 'Delete', lms_leafe_path(leave.id), method: :delete, remote: true, confirm: "Are you sure to cancel this leave?" %></td>
+          <td><%= link_to 'Notes', lms_leafe_lms_notes_path(leave.id) %></td>
         <% end %>
 	    <% elsif leave.processed? %>
 	      <td><p style='color:green;'>Processed</p></td>
@@ -122,6 +124,7 @@
 	      <td><%= leave.processed_on.strftime("%d %b %Y") %></td>
         <% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:ar]) %>
           <td><%= link_to 'Delete', lms_leafe_path(leave.id), method: :delete, remote: true, confirm: "Are you sure to cancel this leave?" %></td>
+          <td><%= link_to 'Notes', lms_leafe_lms_notes_path(leave.id) %></td>
         <% end %>
 	    <% elsif leave.rejected? %>
 	      <td><%= leave.lms_leave_status.rejector.name %></td>
@@ -150,6 +153,7 @@
 	      <td>--</td>
         <% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:ar]) %>
           <td><%= link_to 'Delete', lms_leafe_path(leave.id), method: :delete, remote: true, confirm: "Are you sure to cancel this leave?" %></td>
+          <td><%= link_to 'Notes', lms_leafe_lms_notes_path(leave.id) %></td>
         <% end %>
 	    <% elsif leave.processed? %>
 	      <td><p style='color:green;'>Processed</p></td>
@@ -159,6 +163,7 @@
 	      <td><%= leave.processed_on.strftime("%d %b %Y") %>!!!!!!!</td>
         <% if LeaveManagementSystem.allowed_to?(@employee, LeaveManagementSystem::ROLES[:ar]) %>
           <td><%= link_to 'Delete', lms_leafe_path(leave.id), method: :delete, remote: true, confirm: "Are you sure to cancel this leave?" %></td>
+          <td><%= link_to 'Notes', lms_leafe_lms_notes_path(leave.id) %></td>
         <% end %>
 	    <% elsif leave.rejected? %>
 	      <td><%= leave.lms_leave_status.rejector.name %></td>

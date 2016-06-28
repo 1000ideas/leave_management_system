@@ -10,6 +10,7 @@ module LeaveManagementSystem
 	  extend ClassMethods
 	  after_save :create_leave_account
 	  private :create_leave_account
+    has_many :lms_leaves
 	end
       end
       

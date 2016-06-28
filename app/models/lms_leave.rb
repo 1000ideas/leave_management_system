@@ -12,6 +12,7 @@ class LmsLeave < ActiveRecord::Base
   belongs_to :lms_yearly_leave_history
   belongs_to :lms_monthly_leave_history
   belongs_to :employee, :foreign_key => 'user_id'
+  has_many :lms_notes, dependent: :destroy
   
   delegate :approver, :rejector, :processor, :to => :lms_leave_status
   delegate :lms_yearly_setting, :to => :lms_yearly_leave_history

@@ -1,0 +1,20 @@
+<div style="font-size: 15px; border-bottom: 2px dotted #333333; margin-bottom: 10px;">
+  <%= link_to 'Back', lms_dashboards_path %>
+</div>
+
+<h2>Notes</h2>
+
+<div id="notes">
+  <% @notes.each do |note| %>
+    <div class="note">
+      <p><%= note.content %></p>
+      <span style="border-top: 1px solid #cccccc; font-size: 10px;">
+        Added by: <%= note.user.name %> at <%= Date.parse(note.created_at.to_s) %>
+      </span>
+    </div>
+  <% end %>
+</div>
+
+<div style="margin-top: 40px; text-align: center; border-top: 2px dotted #333333; padding-top: 10px;">
+  <%= render partial: 'new' %>
+</div>
